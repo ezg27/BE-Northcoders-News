@@ -32,7 +32,7 @@ const addCommentByArticleId = (req, res, next) => {
   });
 }
 
-const adjustVoteCount = (req, res, next) => {
+const adjustArticleVoteCount = (req, res, next) => {
   let update = (req.query.vote === 'up') ? { $inc: { votes: 1 } } : { $inc: { votes: -1 } };
   let obj = { _id: req.params.article_id };
   Article.findByIdAndUpdate(obj, update)
@@ -41,4 +41,4 @@ const adjustVoteCount = (req, res, next) => {
     })
 }
 
-module.exports = {getArticles, getArticleById, getCommentsByArticleId, addCommentByArticleId, adjustVoteCount};
+module.exports = {getArticles, getArticleById, getCommentsByArticleId, addCommentByArticleId, adjustArticleVoteCount};

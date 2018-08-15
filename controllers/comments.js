@@ -15,4 +15,12 @@ const deleteCommentById = (req, res, next) => {
   })
 }
 
-module.exports = {getComments, deleteCommentById};
+const adjustCommentVoteCountById = (req, res, next) => {
+  let update = req.query.vote === 'up' ? { $inc: { votes: 1 } } : { $inc: { votes: -1 } };
+  let obj = { _id: req.params.comment_id };
+  Comment.findByIdAndUpdate(obj, update).then(comment => {
+    res.status(200).send({ comment });
+  });
+}
+
+module.exports = {getComments, deleteCommentById, adjustCommentVoteCountById};
