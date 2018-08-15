@@ -35,7 +35,7 @@ const addCommentByArticleId = (req, res, next) => {
 const adjustArticleVoteCount = (req, res, next) => {
   let update = (req.query.vote === 'up') ? { $inc: { votes: 1 } } : { $inc: { votes: -1 } };
   let obj = { _id: req.params.article_id };
-  Article.findByIdAndUpdate(obj, update)
+  Article.findByIdAndUpdate(obj, update, {new: true})
     .then(article => {
       res.status(200).send({ article });
     })

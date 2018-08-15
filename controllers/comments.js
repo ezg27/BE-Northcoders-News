@@ -18,7 +18,7 @@ const deleteCommentById = (req, res, next) => {
 const adjustCommentVoteCountById = (req, res, next) => {
   let update = req.query.vote === 'up' ? { $inc: { votes: 1 } } : { $inc: { votes: -1 } };
   let obj = { _id: req.params.comment_id };
-  Comment.findByIdAndUpdate(obj, update).then(comment => {
+  Comment.findByIdAndUpdate(obj, update, {new: true}).then(comment => {
     res.status(200).send({ comment });
   });
 }
