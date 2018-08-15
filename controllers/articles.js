@@ -9,4 +9,13 @@ const getArticles = (req, res, next) => {
     });
 };
 
-module.exports = getArticles;
+const getArticleById = (req, res, next) => {
+  Article.findOne(req.params)
+    // .populate('ownerId', 'name -_id')
+    // .populate('ownerId')
+    .then(articles => {
+      res.status(200).send({ articles });
+    });
+};
+
+module.exports = {getArticles, getArticleById};

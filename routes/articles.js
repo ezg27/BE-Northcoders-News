@@ -1,7 +1,9 @@
 const articleRouter = require('express').Router();
-const getArticles = require('../controllers/articles');
+const {getArticles, getArticleById} = require('../controllers/articles');
 
 articleRouter.route('/').get(getArticles);
+
+articleRouter.route('/:_id').get(getArticleById);
 
 // areaRouter
 //   .route('/:area_id/restaurants')

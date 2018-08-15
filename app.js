@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const apiRouter = require('./routes/api');
 const bodyparser = require('body-parser');
-const DB_URL = 'mongodb://localhost:27017/film_night';
+const DB_URL = 'mongodb://localhost:27017/NC_News';
 
 app.use(bodyparser.json());
 
