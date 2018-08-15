@@ -9,4 +9,11 @@ const getUsers = (req, res, next) => {
     });
 };
 
-module.exports = getUsers;
+const getUserByUsername = (req, res, next) => {
+  User.findOne(req.params)
+    .then(user => {
+      res.status(200).send({ user });
+    });
+};
+
+module.exports = { getUsers, getUserByUsername };

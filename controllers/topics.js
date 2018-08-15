@@ -1,4 +1,4 @@
-const { Topic } = require('../models');
+const { Topic, Article } = require('../models');
 
 const getTopics = (req, res, next) => {
   Topic.find()
@@ -11,7 +11,7 @@ const getTopics = (req, res, next) => {
 };
 
 const getArticlesByTopicSlug = (req, res, next) => {
-  Topic.find(req.params)
+  Article.find({belongs_to: req.params.slug})
   .then(articles => {
     res.status(200).send({ articles });
   })
