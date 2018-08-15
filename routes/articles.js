@@ -9,9 +9,4 @@ articleRouter.route('/:_id/comments')
   .get(getCommentsByArticleId)
   .post(addCommentByArticleId)
 
-// areaRouter
-//   .route('/:area_id/restaurants')
-//   .get(getRestaurantsByAreaId)
-//   .post(addRestaurantsToArea);
-
 module.exports = articleRouter;

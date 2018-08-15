@@ -2,8 +2,6 @@ const { Article, Comment } = require('../models');
 
 const getArticles = (req, res, next) => {
   Article.find()
-    // .populate('ownerId', 'name -_id')
-    // .populate('ownerId')
     .then(articles => {
       res.status(200).send({ articles });
     });
@@ -24,7 +22,9 @@ const getCommentsByArticleId = (req, res, next) => {
 }
 
 const addCommentByArticleId = (req, res, next) => {
-  Comment.create(req.body)
+  let obj = req.body;
+  obj.belongs_to = req.params._id;
+  Comment.create(obj)
     .then(comment => {
     res.status(201).send({ comment });
   });

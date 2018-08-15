@@ -1,11 +1,9 @@
 const commentRouter = require('express').Router();
-const getComments = require('../controllers/comments');
+const {getComments, deleteCommentById} = require('../controllers/comments');
 
 commentRouter.route('/').get(getComments);
 
-// areaRouter
-//   .route('/:area_id/restaurants')
-//   .get(getRestaurantsByAreaId)
-//   .post(addRestaurantsToArea);
+commentRouter.route('/:comment_id')
+  .delete(deleteCommentById);
 
 module.exports = commentRouter;

@@ -2,8 +2,6 @@ const { Topic, Article } = require('../models');
 
 const getTopics = (req, res, next) => {
   Topic.find()
-    // .populate('ownerId', 'name -_id')
-    // .populate('ownerId')
     .then(topics => {
       res.status(200).send({ topics });
     })
@@ -19,7 +17,9 @@ const getArticlesByTopicSlug = (req, res, next) => {
 };
 
 const addArticleByTopicSlug = (req, res, next) => {
-  Article.create(req.body)
+  let obj = req.body;
+  obj.belongs_to = req.params.slug;
+  Article.create(obj)
     .then(article => {
       res.status(201).send({ article })
     })
