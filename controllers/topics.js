@@ -18,4 +18,11 @@ const getArticlesByTopicSlug = (req, res, next) => {
   .catch(next);
 };
 
-module.exports = { getTopics, getArticlesByTopicSlug };
+const addArticleByTopicSlug = (req, res, next) => {
+  Article.create(req.body)
+    .then(article => {
+      res.status(201).send({ article })
+    })
+}
+
+module.exports = { getTopics, getArticlesByTopicSlug, addArticleByTopicSlug };

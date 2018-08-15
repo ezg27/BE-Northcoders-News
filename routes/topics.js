@@ -1,15 +1,11 @@
 const topicRouter = require('express').Router();
-const {getTopics, getArticlesByTopicSlug} = require('../controllers/topics');
+const {getTopics, getArticlesByTopicSlug, addArticleByTopicSlug} = require('../controllers/topics');
 
 topicRouter.route('/')
   .get(getTopics)
 
 topicRouter.route('/:slug/articles')
-  .get(getArticlesByTopicSlug);
-
-// areaRouter
-//   .route('/:area_id/restaurants')
-//   .get(getRestaurantsByAreaId)
-//   .post(addRestaurantsToArea);
+  .get(getArticlesByTopicSlug)
+  .post(addArticleByTopicSlug)
 
 module.exports = topicRouter;

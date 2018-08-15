@@ -5,9 +5,4 @@ userRouter.route('/').get(getUsers);
 
 userRouter.route('/:username').get(getUserByUsername);
 
-// areaRouter
-//   .route('/:area_id/restaurants')
-//   .get(getRestaurantsByAreaId)
-//   .post(addRestaurantsToArea);
-
 module.exports = userRouter;

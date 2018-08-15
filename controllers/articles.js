@@ -11,8 +11,6 @@ const getArticles = (req, res, next) => {
 
 const getArticleById = (req, res, next) => {
   Article.findOne(req.params)
-    // .populate('ownerId', 'name -_id')
-    // .populate('ownerId')
     .then(article => {
       res.status(200).send({ article });
     });
@@ -25,4 +23,11 @@ const getCommentsByArticleId = (req, res, next) => {
     })
 }
 
-module.exports = {getArticles, getArticleById, getCommentsByArticleId};
+const addCommentByArticleId = (req, res, next) => {
+  Comment.create(req.body)
+    .then(comment => {
+    res.status(201).send({ comment });
+  });
+}
+
+module.exports = {getArticles, getArticleById, getCommentsByArticleId, addCommentByArticleId};
