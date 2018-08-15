@@ -32,4 +32,13 @@ const addCommentByArticleId = (req, res, next) => {
   });
 }
 
-module.exports = {getArticles, getArticleById, getCommentsByArticleId, addCommentByArticleId};
+const adjustVoteCount = (req, res, next) => {
+  let update = (req.query.vote === 'up') ? { $inc: { votes: 1 } } : { $inc: { votes: -1 } };
+  let obj = { _id: req.params.article_id };
+  Article.findByIdAndUpdate(obj, update)
+    .then(article => {
+      res.status(200).send({ article });
+    })
+}
+
+module.exports = {getArticles, getArticleById, getCommentsByArticleId, addCommentByArticleId, adjustVoteCount};
