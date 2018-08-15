@@ -9,7 +9,7 @@ const getComments = (req, res, next) => {
 
 const deleteCommentById = (req, res, next) => {
   let obj = { _id: req.params.comment_id};
-  Comment.deleteOne(obj)
+  Comment.findByIdAndRemove(obj)
   .then(comment => {
     res.status(200).send({ comment });
   })

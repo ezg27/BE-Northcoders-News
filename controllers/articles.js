@@ -8,7 +8,9 @@ const getArticles = (req, res, next) => {
 };
 
 const getArticleById = (req, res, next) => {
-  Article.findOne(req.params)
+  console.log(req.params)
+  let obj = { _id: req.params.article_id };
+  Article.findOne(obj)
     .then(article => {
       res.status(200).send({ article });
     });

@@ -17,7 +17,6 @@ app.get('/', (req, res, next) => {
   res.send('Welcome to NC News...');
 });
 
-
 app.use('/api', apiRouter);
 
 

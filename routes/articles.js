@@ -3,7 +3,7 @@ const {getArticles, getArticleById, getCommentsByArticleId, addCommentByArticleI
 
 articleRouter.route('/').get(getArticles);
 
-articleRouter.route('/:_id').get(getArticleById);
+articleRouter.route('/:article_id').get(getArticleById);
 
 articleRouter.route('/:_id/comments')
   .get(getCommentsByArticleId)
