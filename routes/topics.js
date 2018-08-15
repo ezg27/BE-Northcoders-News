@@ -1,7 +1,11 @@
 const topicRouter = require('express').Router();
-const getTopics = require('../controllers/topics');
+const {getTopics, getArticlesByTopicSlug} = require('../controllers/topics');
 
-topicRouter.route('/').get(getTopics);
+topicRouter.route('/')
+  .get(getTopics)
+
+topicRouter.route('/:slug/articles')
+  .get(getArticlesByTopicSlug);
 
 // areaRouter
 //   .route('/:area_id/restaurants')
