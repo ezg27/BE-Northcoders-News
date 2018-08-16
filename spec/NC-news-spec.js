@@ -42,6 +42,7 @@ describe('NC NEWS API /api', () => {
       })
     })
   })
+
   describe('/articles', () => {
     it('GET returns the appropriate articles object', () => {
       return request.get('/api/articles/')
@@ -50,10 +51,45 @@ describe('NC NEWS API /api', () => {
         expect(res.body.articles.length).to.equal(4);
       })
     })
+    describe('/:article_id', () => {
+      it('GET returns the appropriate article for passed Mongo Id', () => {
+        return request.get(`/api/articles/${articleDocs[0]._id}`)
+        .expect(200)
+        .then(res => {
+          expect(res.body.article).to.have.all.keys(
+            '_id',
+            'votes',
+            'title',
+            'created_by',
+            'body',
+            'created_at',
+            'belongs_to',
+            '__v'
+          )
+          expect(res.body.article.title).to.equal('Living in the shadow of a great man');
+        })
+      })
+      it('GET invalid ID returns status 400 and error message', () => {
+        return request.get(`/api/articles/lasjgia`)
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).to.equal('Cast to ObjectId failed for value "lasjgia" at path "_id" for model "articles"')
+        })
+      })
+      it('GET ID that does not exist in collection returns status 404 and error message', () => {
+        return request.get(`/api/articles/${topicDocs[0]._id}`)
+          .expect(404)
+          .then(res => {
+            expect(res.body.msg).to.equal('No article found for specified ID')
+          })
+      })
+    })
   })
+
   describe('/comments', () => {
     
   })
+
   describe('/users', () => {
     it('GET returns the appropriate user object for the passed username', () => {
       return request.get(`/api/users/${userDocs[0].username}`)

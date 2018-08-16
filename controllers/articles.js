@@ -8,12 +8,13 @@ const getArticles = (req, res, next) => {
 };
 
 const getArticleById = (req, res, next) => {
-  console.log(req.params)
   let obj = { _id: req.params.article_id };
   Article.findOne(obj)
     .then(article => {
+      if (!article) throw {status: 404, msg: 'No article found for specified ID'}
       res.status(200).send({ article });
-    });
+    })
+    .catch(next);
 };
 
 const getCommentsByArticleId = (req, res, next) => {
