@@ -27,7 +27,7 @@ app.use('/*', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  if (err.name === 'CastError' || err.name === 'ValidationError')
+  if (err.name === 'CastError' || err.name === 'ValidationError' || err.name === 'Error')
     err.status = 400;
   res
     .status(err.status || 500)

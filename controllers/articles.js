@@ -40,8 +40,15 @@ const adjustArticleVoteCount = (req, res, next) => {
   let obj = { _id: req.params.article_id };
   Article.findByIdAndUpdate(obj, update, {new: true})
     .then(article => {
+      if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
       res.status(200).send({ article });
     })
+    .catch(err => {
+      if (err.message === 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters') {
+        next({ status: 400, msg: 'Article ID is invalid!' });
+      }
+      else next(err);
+    });
 }
 
 module.exports = {getArticles, getArticleById, getCommentsByArticleId, addCommentByArticleId, adjustArticleVoteCount};

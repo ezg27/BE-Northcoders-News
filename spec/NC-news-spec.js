@@ -100,7 +100,7 @@ describe('NC NEWS API /api', () => {
             );
           });
       });
-      it('POST returns status 404 and error message when posted to slug that does not exist', () => {
+      xit('POST returns status 404 and error message when posted to slug that does not exist', () => {
         const newArticle = {
           title: 'The world is a strange place',
           topic: 'cats',
@@ -169,6 +169,32 @@ describe('NC NEWS API /api', () => {
             expect(res.body.msg).to.equal('Article ID does not exist!');
           });
       });
+      it('PUT returns the appropriate article for passed Mongo Id with vote count incremented according to passed query', () => {
+        return request
+          .put(`/api/articles/${articleDocs[0]._id}?vote=up`)
+          .expect(200)
+          .then(res => {
+            expect(res.body.article.votes).to.equal(articleDocs[0].votes + 1);
+          });
+      });
+      it('PUT invalid ID returns status 400 and error message', () => {
+        return request
+          .put(`/api/articles/jashdkj?vote=up`)
+          .expect(400)
+          .then(res => {
+            expect(res.body.msg).to.equal(
+              'Article ID is invalid!'
+            );
+          });
+      });
+      it('PUT ID that does not exist in collection returns status 404 and error message', () => {
+        return request
+          .put(`/api/articles/${topicDocs[0]._id}?vote=up`)
+          .expect(404)
+          .then(res => {
+            expect(res.body.msg).to.equal('Article ID does not exist!');
+          });
+      });
       describe('/comments', () => {
         it('GET returns appropriate comment object for passed article Mongo Id', () => {
           return request
@@ -231,7 +257,9 @@ describe('NC NEWS API /api', () => {
                 'created_at',
                 '__v'
               );
-              expect(res.body.comment.body).to.equal('Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.');
+              expect(res.body.comment.body).to.equal(
+                'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.'
+              );
             });
         });
       });

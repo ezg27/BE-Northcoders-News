@@ -22,6 +22,7 @@ const addArticleByTopicSlug = (req, res, next) => {
   obj.belongs_to = req.params.slug;
   Article.create(obj)
     .then(article => {
+      if (!article.belongs_to) throw {status: 404, msg: 'Topic slug does not exist!'}
       res.status(201).send({ article });
     })
     .catch(next);
