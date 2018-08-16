@@ -11,7 +11,7 @@ const getArticleById = (req, res, next) => {
   let obj = { _id: req.params.article_id };
   Article.findOne(obj)
     .then(article => {
-      if (!article) throw {status: 404, msg: 'No article found for specified ID'}
+      if (!article) throw {status: 404, msg: 'Article ID does not exist!'}
       res.status(200).send({ article });
     })
     .catch(next);
@@ -20,8 +20,10 @@ const getArticleById = (req, res, next) => {
 const getCommentsByArticleId = (req, res, next) => {
   Comment.find({belongs_to: req.params._id})
     .then(comments => {
+      if (comments.length === 0) throw { status: 404, msg: 'Article ID does not exist!' }
       res.status(200).send({ comments });
     })
+    .catch(next)
 }
 
 const addCommentByArticleId = (req, res, next) => {
