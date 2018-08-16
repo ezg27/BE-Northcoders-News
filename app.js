@@ -7,11 +7,14 @@ const DB_URL = require('./config/db-config.js');
 
 app.use(bodyparser.json());
 
-
-mongoose.connect(DB_URL, { useNewUrlParser: true })
+mongoose
+  .connect(
+    DB_URL,
+    { useNewUrlParser: true }
+  )
   .then(() => {
-    console.log('connected to DB')
-  })
+    console.log('connected to DB');
+  });
 
 app.get('/', (req, res, next) => {
   res.send('Welcome to NC News...');
@@ -19,13 +22,17 @@ app.get('/', (req, res, next) => {
 
 app.use('/api', apiRouter);
 
-
 app.use('/*', (req, res) => {
   res.status(404).send({ err: 'Page not found' });
 });
 
 app.use((err, req, res, next) => {
-  
-})
+  if (err.name === 'CastError' || err.name === 'ValidationError')
+    err.status = 400;
+  res
+    .status(err.status || 500)
+    .send({ msg: err.msg || err.message || 'Internal server error!' });
+  // res.status(500).send('Internal server error');
+});
 
 module.exports = app;

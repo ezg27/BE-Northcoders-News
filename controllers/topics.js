@@ -11,6 +11,7 @@ const getTopics = (req, res, next) => {
 const getArticlesByTopicSlug = (req, res, next) => {
   Article.find({belongs_to: req.params.slug})
   .then(articles => {
+    if (articles.length === 0) throw { status: 404, msg: 'Topic slug does not exist!' };
     res.status(200).send({ articles });
   })
   .catch(next);
@@ -21,7 +22,7 @@ const addArticleByTopicSlug = (req, res, next) => {
   obj.belongs_to = req.params.slug;
   Article.create(obj)
     .then(article => {
-      res.status(201).send({ article })
+      res.status(201).send({ article });
     })
 }
 
