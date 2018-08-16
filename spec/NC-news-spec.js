@@ -266,7 +266,34 @@ describe('NC NEWS API /api', () => {
     });
   });
 
-  describe('/comments', () => {});
+  describe('/comments', () => {
+    describe('/:comments_id', () => {
+      it('PUT returns the appropriate comment for passed Mongo Id with vote count incremented according to passed query', () => {
+        return request
+          .put(`/api/comments/${commentDocs[0]._id}?vote=down`)
+          .expect(200)
+          .then(res => {
+            expect(res.body.comment.votes).to.equal(commentDocs[0].votes - 1);
+          });
+      })
+      it('PUT invalid ID returns status 400 and error message', () => {
+        return request
+          .put(`/api/comments/jashdkj?vote=down`)
+          .expect(400)
+          .then(res => {
+            expect(res.body.msg).to.equal('Comment ID is invalid!');
+          });
+      });
+      it('PUT ID that does not exist in collection returns status 404 and error message', () => {
+        return request
+          .put(`/api/comments/${topicDocs[0]._id}?vote=down`)
+          .expect(404)
+          .then(res => {
+            expect(res.body.msg).to.equal('Comment ID does not exist!');
+          });
+      });
+    })
+  });
 
   describe('/users', () => {
     it('GET returns the appropriate user object for the passed username', () => {
