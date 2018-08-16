@@ -7,8 +7,7 @@ const testData = require('../seed/testData/index');
 const seedDB = require('../seed/seed.js');
 
 describe('NC NEWS API /api', () => {
-  // let topicDocs, userDocs, articleDocs, commentDocs, wrongId = mongoose.Types.ObjectId();
-  // let wrongId = mongoose.Types.ObjectId();
+  let topicDocs, userDocs, articleDocs, commentDocs;
   beforeEach(() => {
     return seedDB(testData).then(docs => {
       [commentDocs, topicDocs, userDocs, articleDocs] = docs;
@@ -54,6 +53,69 @@ describe('NC NEWS API /api', () => {
           .expect(404)
           .then(res => {
             expect(res.body.msg).to.equal('Topic slug does not exist!');
+          });
+      });
+      it('POST adds a new article to the database and returns posted article', () => {
+        const newArticle = {
+          title: 'The world is a strange place',
+          topic: 'cats',
+          created_by: userDocs[0]._id,
+          body: 'I like turtles',
+          created_at: 1471522072389
+        };
+        return request
+          .post(`/api/topics/${topicDocs[0].slug}/articles`)
+          .send(newArticle)
+          .expect(201)
+          .then(res => {
+            expect(res.body.article).to.have.all.keys(
+              '_id',
+              'votes',
+              'title',
+              'created_by',
+              'body',
+              'created_at',
+              'belongs_to',
+              '__v'
+            );
+            expect(res.body.article.title).to.equal(
+              'The world is a strange place'
+            );
+          });
+      });
+      it('POST returns status 400 and error message when a required field is missing', () => {
+        const newArticle = {
+          topic: 'cats',
+          created_by: userDocs[0]._id,
+          body: 'I like turtles',
+          created_at: 1471522072389
+        };
+        return request
+          .post(`/api/topics/${topicDocs[0].slug}/articles`)
+          .send(newArticle)
+          .expect(400)
+          .then(res => {
+            expect(res.body.msg).to.equal(
+              'articles validation failed: title: Path `title` is required.'
+            );
+          });
+      });
+      it('POST returns status 404 and error message when posted to slug that does not exist', () => {
+        const newArticle = {
+          title: 'The world is a strange place',
+          topic: 'cats',
+          created_by: userDocs[0]._id,
+          body: 'I like turtles',
+          created_at: 1471522072389
+        };
+        return request
+          .post(`/api/topics/aslgjla/articles`)
+          .send(newArticle)
+          .expect(404)
+          .then(res => {
+            expect(res.body.msg).to.equal(
+              'articles validation failed: title: Path `title` is required.'
+            );
           });
       });
     });
@@ -144,6 +206,32 @@ describe('NC NEWS API /api', () => {
             .expect(404)
             .then(res => {
               expect(res.body.msg).to.equal('Article ID does not exist!');
+            });
+        });
+        it('POST adds a new comment to the database and returns posted comment', () => {
+          const newComment = {
+            body:
+              'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.',
+            belongs_to: 'Living in the shadow of a great man',
+            created_by: userDocs[0]._id,
+            votes: 4,
+            created_at: 1501051330835
+          };
+          return request
+            .post(`/api/articles/${articleDocs[0]._id}/comments`)
+            .send(newComment)
+            .expect(201)
+            .then(res => {
+              expect(res.body.comment).to.have.all.keys(
+                '_id',
+                'votes',
+                'body',
+                'belongs_to',
+                'created_by',
+                'created_at',
+                '__v'
+              );
+              expect(res.body.comment.body).to.equal('Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.');
             });
         });
       });

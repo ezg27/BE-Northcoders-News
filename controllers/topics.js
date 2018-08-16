@@ -24,6 +24,7 @@ const addArticleByTopicSlug = (req, res, next) => {
     .then(article => {
       res.status(201).send({ article });
     })
+    .catch(next);
 }
 
 module.exports = { getTopics, getArticlesByTopicSlug, addArticleByTopicSlug };
