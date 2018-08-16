@@ -5,6 +5,7 @@ const { expect } = require('chai');
 const mongoose = require('mongoose');
 const testData = require('../seed/testData/index');
 const seedDB = require('../seed/seed.js');
+const { Comment } = require('../models');
 
 describe('NC NEWS API /api', () => {
   let topicDocs, userDocs, articleDocs, commentDocs;
@@ -287,6 +288,33 @@ describe('NC NEWS API /api', () => {
       it('PUT ID that does not exist in collection returns status 404 and error message', () => {
         return request
           .put(`/api/comments/${topicDocs[0]._id}?vote=down`)
+          .expect(404)
+          .then(res => {
+            expect(res.body.msg).to.equal('Comment ID does not exist!');
+          });
+      });
+      it('DELETE returns the appropriate comment for passed Mongo Id and removes this comment from the collection', () => {
+        return request
+          .delete(`/api/comments/${commentDocs[0]._id}`)
+          .expect(200)
+          .then(res => {
+            expect(res.body.comment.body).to.equal('Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.');
+            Comment.findOne(commentDocs[0]._id).then(comment => {
+              expect(comment).to.equal(null);
+            })
+          })
+      })
+      it('DELETE invalid ID returns status 400 and error message', () => {
+        return request
+          .delete(`/api/comments/jashdkj`)
+          .expect(400)
+          .then(res => {
+            expect(res.body.msg).to.equal('Comment ID is invalid!');
+          });
+      });
+      it('DELETE ID that does not exist in collection returns status 404 and error message', () => {
+        return request
+          .delete(`/api/comments/${topicDocs[0]._id}`)
           .expect(404)
           .then(res => {
             expect(res.body.msg).to.equal('Comment ID does not exist!');
