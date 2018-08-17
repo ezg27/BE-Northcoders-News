@@ -190,6 +190,14 @@ describe('NC NEWS API /api', () => {
             expect(res.body.article.votes).to.equal(articleDocs[0].votes + 1);
           });
       });
+      it('PUT returns the appropriate article for passed Mongo Id with vote count decremented according to passed query', () => {
+        return request
+          .put(`/api/articles/${articleDocs[0]._id}?vote=down`)
+          .expect(200)
+          .then(res => {
+            expect(res.body.article.votes).to.equal(articleDocs[0].votes - 1);
+          });
+      });
       it('PUT invalid ID returns status 400 and error message', () => {
         return request
           .put(`/api/articles/jashdkj?vote=up`)
@@ -282,6 +290,14 @@ describe('NC NEWS API /api', () => {
   describe('/comments', () => {
     describe('/:comments_id', () => {
       it('PUT returns the appropriate comment for passed Mongo Id with vote count incremented according to passed query', () => {
+        return request
+          .put(`/api/comments/${commentDocs[0]._id}?vote=up`)
+          .expect(200)
+          .then(res => {
+            expect(res.body.comment.votes).to.equal(commentDocs[0].votes + 1);
+          });
+      });
+      it('PUT returns the appropriate comment for passed Mongo Id with vote count decremented according to passed query', () => {
         return request
           .put(`/api/comments/${commentDocs[0]._id}?vote=down`)
           .expect(200)

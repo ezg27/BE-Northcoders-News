@@ -1,7 +1,7 @@
 const { Comment } = require('../models');
 
 const getComments = (req, res, next) => {
-  Comment.find()
+  Comment.find().populate('created_by belongs_to', '-__v')
     .then(comments => {
       res.status(200).send({ comments });
     });

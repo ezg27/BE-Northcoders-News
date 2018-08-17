@@ -2,7 +2,7 @@ const { Topic, Article, Comment } = require('../models');
 const createNewTopic = require('./utils');
 
 const getTopics = (req, res, next) => {
-  Topic.find()
+  Topic.find().populate('')
     .then(topics => {
       res.status(200).send({ topics });
     })
