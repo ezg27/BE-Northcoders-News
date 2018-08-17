@@ -2,17 +2,17 @@ const { Article, Comment } = require('../models');
 
 const getArticles = (req, res, next) => {
   Article.find().lean()
-    .then(articles => {
+    .then(allArticles => {
       Comment.find().lean()
       .then(comments => {
-        let newArticles = articles.map(article => {
+        let articles = allArticles.map(article => {
           let artComs = comments.filter(comment => {
             return comment.belongs_to.toString() === article._id.toString();
           }).length;
           article.comments = artComs;
           return article;
         })
-        res.status(200).send({ newArticles });
+        res.status(200).send({ articles });
       })
     });
 };

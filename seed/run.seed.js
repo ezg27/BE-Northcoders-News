@@ -1,8 +1,7 @@
-// const DB_URL = 'mongodb://localhost:27017/NC_News';
 const DB_URL = require('../config/db-config.js');
-const seedDB = require('./seed');
+const seedDB = require('./seed.js');
 const mongoose = require('mongoose');
-const { topicData, userData, articleData, commentData } = require('./devData/');
+const { topicData, userData, articleData, commentData } = require('./devData/index.js');
 
 mongoose
   .connect(

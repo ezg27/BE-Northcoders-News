@@ -44,6 +44,7 @@ describe('NC NEWS API /api', () => {
               'body',
               'created_at',
               'belongs_to',
+              'comments',
               '__v'
             );
           });
@@ -129,6 +130,17 @@ describe('NC NEWS API /api', () => {
         .expect(200)
         .then(res => {
           expect(res.body.articles.length).to.equal(4);
+          expect(res.body.articles[0]).to.have.all.keys(
+            '_id',
+            'votes',
+            'title',
+            'created_by',
+            'body',
+            'created_at',
+            'belongs_to',
+            'comments',
+            '__v'
+          )
         });
     });
     describe('/:article_id', () => {

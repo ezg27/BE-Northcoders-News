@@ -11,19 +11,19 @@ const getTopics = (req, res, next) => {
 
 const getArticlesByTopicSlug = (req, res, next) => {
   Article.find({belongs_to: req.params.slug}).lean()
-  .then(articles => {
-    if (articles.length === 0) throw { status: 404, msg: 'Topic slug does not exist!' };
+  .then(topArticles => {
+    if (topArticles.length === 0) throw { status: 404, msg: 'Topic slug does not exist!' };
     Comment.find()
       .lean()
       .then(comments => {
-        let newArticles = articles.map(article => {
+        let articles = topArticles.map(article => {
           let artComs = comments.filter(comment => {
             return comment.belongs_to.toString() === article._id.toString();
           }).length;
           article.comments = artComs;
           return article;
         });
-        res.status(200).send({ newArticles });
+        res.status(200).send({ articles });
       });
   })
   .catch(next);
