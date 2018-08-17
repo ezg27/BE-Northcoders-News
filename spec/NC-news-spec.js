@@ -140,7 +140,7 @@ describe('NC NEWS API /api', () => {
             'belongs_to',
             'comments',
             '__v'
-          )
+          );
         });
     });
     describe('/:article_id', () => {
@@ -196,7 +196,7 @@ describe('NC NEWS API /api', () => {
           .expect(400)
           .then(res => {
             expect(res.body.msg).to.equal(
-              'Article ID is invalid!'
+              'Cast to ObjectId failed for value "jashdkj" at path "_id" for model "articles"'
             );
           });
       });
@@ -288,13 +288,13 @@ describe('NC NEWS API /api', () => {
           .then(res => {
             expect(res.body.comment.votes).to.equal(commentDocs[0].votes - 1);
           });
-      })
+      });
       it('PUT invalid ID returns status 400 and error message', () => {
         return request
           .put(`/api/comments/jashdkj?vote=down`)
           .expect(400)
           .then(res => {
-            expect(res.body.msg).to.equal('Comment ID is invalid!');
+            expect(res.body.msg).to.equal('Cast to ObjectId failed for value "jashdkj" at path "_id" for model "comments"');
           });
       });
       it('PUT ID that does not exist in collection returns status 404 and error message', () => {
@@ -310,18 +310,22 @@ describe('NC NEWS API /api', () => {
           .delete(`/api/comments/${commentDocs[0]._id}`)
           .expect(200)
           .then(res => {
-            expect(res.body.comment.body).to.equal('Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.');
+            expect(res.body.comment.body).to.equal(
+              'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.'
+            );
             Comment.findOne(commentDocs[0]._id).then(comment => {
               expect(comment).to.equal(null);
-            })
-          })
-      })
+            });
+          });
+      });
       it('DELETE invalid ID returns status 400 and error message', () => {
         return request
           .delete(`/api/comments/jashdkj`)
           .expect(400)
           .then(res => {
-            expect(res.body.msg).to.equal('Comment ID is invalid!');
+            expect(res.body.msg).to.equal(
+              'Cast to ObjectId failed for value "jashdkj" at path "_id" for model "comments"'
+            );
           });
       });
       it('DELETE ID that does not exist in collection returns status 404 and error message', () => {
@@ -332,7 +336,7 @@ describe('NC NEWS API /api', () => {
             expect(res.body.msg).to.equal('Comment ID does not exist!');
           });
       });
-    })
+    });
   });
 
   describe('/users', () => {
