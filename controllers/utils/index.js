@@ -10,7 +10,7 @@ const createNewTopic = (req, res, next) => {
     slug: req.params.slug
   }
   Topic.create(topicObj)
-    .then(() => {
+    .then((topic) => {
       let articleObj = req.body;
       articleObj.belongs_to = req.params.slug;
       Article.create(articleObj)

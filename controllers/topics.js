@@ -1,4 +1,4 @@
-const { Topic, Article } = require('../models');
+const { Topic, Article, Comment } = require('../models');
 const createNewTopic = require('./utils');
 
 const getTopics = (req, res, next) => {
@@ -10,10 +10,21 @@ const getTopics = (req, res, next) => {
 };
 
 const getArticlesByTopicSlug = (req, res, next) => {
-  Article.find({belongs_to: req.params.slug})
+  Article.find({belongs_to: req.params.slug}).lean()
   .then(articles => {
     if (articles.length === 0) throw { status: 404, msg: 'Topic slug does not exist!' };
-    res.status(200).send({ articles });
+    Comment.find()
+      .lean()
+      .then(comments => {
+        let newArticles = articles.map(article => {
+          let artComs = comments.filter(comment => {
+            return comment.belongs_to.toString() === article._id.toString();
+          }).length;
+          article.comments = artComs;
+          return article;
+        });
+        res.status(200).send({ newArticles });
+      });
   })
   .catch(next);
 };
@@ -28,7 +39,6 @@ const addArticleByTopicSlug = (req, res, next) => {
         obj.belongs_to = req.params.slug;
         Article.create(obj)
           .then(article => {
-            // if (!article.belongs_to) throw {status: 404, msg: 'Topic slug does not exist!'}
             res.status(201).send({ article });
           })
           .catch(next);
