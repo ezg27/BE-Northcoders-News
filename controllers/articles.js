@@ -1,7 +1,7 @@
 const { Article, Comment } = require('../models');
 
 const getArticles = (req, res, next) => {
-  Article.find().lean()
+  Article.find().populate('created_by', '-__v').lean()
     .then(allArticles => {
       Comment.find().lean()
       .then(comments => {
