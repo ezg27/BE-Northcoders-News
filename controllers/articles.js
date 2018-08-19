@@ -16,7 +16,6 @@ const getArticles = (req, res, next) => {
         });
         let count = getVoteCount(artComs);
         article.comments = artComs.length;
-        article.votes = count;
         return article;
       })
       res.status(200).send({ articles });
@@ -60,9 +59,11 @@ const addCommentByArticleId = (req, res, next) => {
 }
 
 const adjustArticleVoteCount = (req, res, next) => {
-  let update = (req.query.vote === 'up') ? { $inc: { votes: 1 } } : { $inc: { votes: -1 } };
+  if (Object.keys(req.query)[0] !== 'vote') throw { status: 400, msg: '"vote" is the only valid query!' }
+  let update = (req.query.vote === 'up') ? { $inc: { votes: 1 } } : (req.query.vote === 'down') ? { $inc: { votes: -1 } } : null;
+  if (!update) throw { status: 400, msg: 'Query value must be either "up" or "down"!'}
   let obj = { _id: req.params.article_id };
-  Article.findByIdAndUpdate(obj._id, update, {new: true}).lean()
+  Article.findByIdAndUpdate(obj._id, update, {new: true}).populate('created_by').lean()
     .then(article => {
       if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
       return Promise.all([

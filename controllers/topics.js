@@ -10,11 +10,11 @@ const getTopics = (req, res, next) => {
 };
 
 const getArticlesByTopicSlug = (req, res, next) => {
-  Article.find({belongs_to: req.params.slug}, '-__v').lean()
+  Article.find({belongs_to: req.params.slug}, '-__v').populate('created_by').lean()
   .then(topicArticles => {
     if (topicArticles.length === 0) throw { status: 404, msg: 'Topic slug does not exist!' };
     return Promise.all([
-      Comment.find().lean(),
+      Comment.find().populate('created_by').lean(),
       topicArticles
     ]);
   })

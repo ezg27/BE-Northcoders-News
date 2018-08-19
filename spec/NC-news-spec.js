@@ -46,8 +46,29 @@ describe('NC NEWS API /api', () => {
               'belongs_to',
               'comments'
             );
+            expect(res.body.articles[0].created_by).to.have.all.keys(
+              '_id',
+              'username',
+              'name',
+              'avatar_url',
+              '__v'
+            );
           });
       });
+      it('GET returns correct comment count for articles', () => {
+        return request
+          .get(`/api/topics/${topicDocs[0].slug}/articles`)
+          .expect(200)
+          .then(res => {
+            return Promise.all([
+              Comment.find({ belongs_to: res.body.articles[0]._id }),
+              res
+            ])
+          })
+          .then(([comments, res]) => {
+            expect(comments.length).to.equal(res.body.articles[0].comments);
+          })
+      })
       it('GET slug that does not exist in the collection returns status 404 and error message', () => {
         return request
           .get('/api/topics/cheesecake/articles')
@@ -139,8 +160,28 @@ describe('NC NEWS API /api', () => {
             'belongs_to',
             'comments'
           );
+          expect(res.body.articles[0].created_by).to.have.all.keys(
+            '_id',
+            'username',
+            'name',
+            'avatar_url'
+          );
         });
     });
+    it('GET returns correct comment count for articles', () => {
+      return request
+        .get(`/api/articles`)
+        .expect(200)
+        .then(res => {
+          return Promise.all([
+            Comment.find({ belongs_to: res.body.articles[0]._id }),
+            res
+          ])
+        })
+        .then(([comments, res]) => {
+          expect(comments.length).to.equal(res.body.articles[0].comments);
+        })
+    })
     describe('/:article_id', () => {
       it('GET returns the appropriate article for passed Mongo Id', () => {
         return request
@@ -154,13 +195,34 @@ describe('NC NEWS API /api', () => {
               'created_by',
               'body',
               'created_at',
-              'belongs_to'
+              'belongs_to',
+              'comments'
             );
             expect(res.body.article.title).to.equal(
               'Living in the shadow of a great man'
             );
+            expect(res.body.article.created_by).to.have.all.keys(
+              '_id',
+              'username',
+              'name',
+              'avatar_url'
+            );
           });
       });
+      it('GET returns correct comment count for article', () => {
+        return request
+          .get(`/api/articles/${articleDocs[0]._id}`)
+          .expect(200)
+          .then(res => {
+            return Promise.all([
+              Comment.find({ belongs_to: res.body.article._id }),
+              res
+            ]);
+          })
+          .then(([comments, res]) => {
+            expect(comments.length).to.equal(res.body.article.comments);
+          });
+      })
       it('GET invalid ID returns status 400 and error message', () => {
         return request
           .get(`/api/articles/lasjgia`)
@@ -181,18 +243,40 @@ describe('NC NEWS API /api', () => {
       });
       it('PUT returns the appropriate article for passed Mongo Id with vote count incremented according to passed query', () => {
         return request
-          .put(`/api/articles/${articleDocs[0]._id}?vote=up`)
+          .put(`/api/articles/${articleDocs[1]._id}?vote=up`)
           .expect(200)
           .then(res => {
-            expect(res.body.article.votes).to.equal(articleDocs[0].votes + 1);
+            expect(res.body.article.votes).to.equal(articleDocs[1].votes + 1);
+            expect(res.body.article).to.have.all.keys(
+              '_id',
+              'votes',
+              'title',
+              'created_by',
+              'body',
+              'created_at',
+              'belongs_to',
+              'comments',
+              '__v'
+            );
+            expect(res.body.article.title).to.equal(
+              '7 inspirational thought leaders from Manchester UK'
+            );
+            expect(res.body.article.created_by).to.have.all.keys(
+              '_id',
+              'username',
+              'name',
+              'avatar_url',
+              '__v'
+            );
           });
       });
       it('PUT returns the appropriate article for passed Mongo Id with vote count decremented according to passed query', () => {
         return request
-          .put(`/api/articles/${articleDocs[0]._id}?vote=down`)
+          .put(`/api/articles/${articleDocs[1]._id}?vote=down`)
           .expect(200)
           .then(res => {
-            expect(res.body.article.votes).to.equal(articleDocs[0].votes - 1);
+            expect(res.body.article.votes).to.equal(articleDocs[1].votes - 1);
+            expect(res.body.article.title).to.equal('7 inspirational thought leaders from Manchester UK');
           });
       });
       it('PUT invalid ID returns status 400 and error message', () => {
@@ -211,6 +295,22 @@ describe('NC NEWS API /api', () => {
           .expect(404)
           .then(res => {
             expect(res.body.msg).to.equal('Article ID does not exist!');
+          });
+      });
+      it('PUT invalid query key returns status 400 and error message', () => {
+        return request
+          .put(`/api/articles/${topicDocs[0]._id}?lksdj=up`)
+          .expect(400)
+          .then(res => {
+            expect(res.body.msg).to.equal('"vote" is the only valid query!');
+          });
+      });
+      it('PUT invalid query value returns status 400 and error message', () => {
+        return request
+          .put(`/api/articles/${topicDocs[0]._id}?vote=jdsfkjh`)
+          .expect(400)
+          .then(res => {
+            expect(res.body.msg).to.equal('Query value must be either "up" or "down"!');
           });
       });
       describe('/comments', () => {
@@ -316,6 +416,22 @@ describe('NC NEWS API /api', () => {
           .expect(404)
           .then(res => {
             expect(res.body.msg).to.equal('Comment ID does not exist!');
+          });
+      });
+      it('PUT invalid query key returns status 400 and error message', () => {
+        return request
+          .put(`/api/articles/${commentDocs[0]._id}?lksdj=up`)
+          .expect(400)
+          .then(res => {
+            expect(res.body.msg).to.equal('"vote" is the only valid query!');
+          });
+      });
+      it('PUT invalid query value returns status 400 and error message', () => {
+        return request
+          .put(`/api/articles/${commentDocs[0]._id}?vote=jdsfkjh`)
+          .expect(400)
+          .then(res => {
+            expect(res.body.msg).to.equal('Query value must be either "up" or "down"!');
           });
       });
       it('DELETE returns the appropriate comment for passed Mongo Id and removes this comment from the collection', () => {
