@@ -44,8 +44,7 @@ describe('NC NEWS API /api', () => {
               'body',
               'created_at',
               'belongs_to',
-              'comments',
-              '__v'
+              'comments'
             );
           });
       });
@@ -138,8 +137,7 @@ describe('NC NEWS API /api', () => {
             'body',
             'created_at',
             'belongs_to',
-            'comments',
-            '__v'
+            'comments'
           );
         });
     });
@@ -156,8 +154,7 @@ describe('NC NEWS API /api', () => {
               'created_by',
               'body',
               'created_at',
-              'belongs_to',
-              '__v'
+              'belongs_to'
             );
             expect(res.body.article.title).to.equal(
               'Living in the shadow of a great man'
