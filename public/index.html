@@ -23,14 +23,16 @@
   <h3><a></a>GET <code>/api/topics/:topic_slug/articles</code></h3>
   <p>Return all the articles for a certain topic</p>
   <h3><a></a>POST <code>/api/topics/:topic_slug/articles</code></h3>
-  <p>Add a new artcile to a topic. This route requires a JSON <code>body</code>with <code>title</code>, <code>body</code> and <code>created_by</code> key value pairs<br> e.g: <code>{"title": "new title", "body": "This is my new comment", "created_by":
+  <p>Add a new artcile to a topic. This route requires a JSON body with <code>title</code>, <code>body</code> and <code>created_by</code> key value pairs<br> e.g: <code>{"title": "new title", "body": "This is my new comment", "created_by":
     mongo id for a user}</code></p>
   <h3><a></a>GET <code>/api/articles</code></h3>
   <p>Returns all the articles</p>
+  <h3><a></a>GET <code>/api/articles/:article_id</code></h3>
+  <p>Get an individual article</p>
   <h3><a></a>GET <code>/api/articles/:article_id/comments</code></h3>
   <p>Get all the comments for an individual article</p>
   <h3><a></a>POST <code>/api/articles/:article_id/comments</code></h3>
-  <p>Add a new comment to an article. This route requires a JSON <code>body</code> with <code>body</code> and <code>created_by</code> key value pairs<br> e.g: <code>{"body": "This is my new comment", "created_by":
+  <p>Add a new comment to an article. This route requires a JSON body with <code>body</code> and <code>created_by</code> key value pairs<br> e.g: <code>{"body": "This is my new comment", "created_by":
   mongo id for a user}</code>
   </p>
   <h3><a></a>PUT <code>/api/articles/:article_id</code></h3>
