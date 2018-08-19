@@ -1,4 +1,5 @@
 const { Article, Comment } = require('../models');
+const { getVoteCount } = require('./utils');
 
 const getArticles = (req, res, next) => {
   Article.find({}, '-__v').populate('created_by', '-__v').lean()
@@ -13,7 +14,9 @@ const getArticles = (req, res, next) => {
         let artComs = comments.filter(comment => {
           return comment.belongs_to.toString() === article._id.toString();
         });
+        let count = getVoteCount(artComs);
         article.comments = artComs.length;
+        article.votes = count;
         return article;
       })
       res.status(200).send({ articles });
@@ -22,9 +25,17 @@ const getArticles = (req, res, next) => {
 
 const getArticleById = (req, res, next) => {
   let obj = { _id: req.params.article_id };
-  Article.findOne(obj, '-__v').populate('created_by', '-__v')
+  Article.findOne(obj, '-__v').populate('created_by', '-__v').lean()
     .then(article => {
       if (!article) throw {status: 404, msg: 'Article ID does not exist!'}
+      return Promise.all([
+        Comment.find({ belongs_to: article._id }),
+        article
+      ]);
+    }).then(([comments, article]) => { 
+      let count = getVoteCount(comments);
+      article.comments = comments.length;
+      article.votes = count;
       res.status(200).send({ article });
     })
     .catch(next);
@@ -51,9 +62,15 @@ const addCommentByArticleId = (req, res, next) => {
 const adjustArticleVoteCount = (req, res, next) => {
   let update = (req.query.vote === 'up') ? { $inc: { votes: 1 } } : { $inc: { votes: -1 } };
   let obj = { _id: req.params.article_id };
-  Article.findByIdAndUpdate(obj._id, update, {new: true})
+  Article.findByIdAndUpdate(obj._id, update, {new: true}).lean()
     .then(article => {
       if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
+      return Promise.all([
+        Comment.find({ belongs_to: article._id }),
+        article
+      ])
+    }).then(([comments, article]) => {
+      article.comments = comments.length;
       res.status(200).send({ article });
     })
     .catch(next);

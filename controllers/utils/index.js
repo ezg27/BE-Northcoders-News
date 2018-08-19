@@ -23,4 +23,10 @@ const createNewTopic = (req, res, next) => {
     .catch(next);
 }
 
-module.exports = createNewTopic;
+const getVoteCount = (comments) => {
+  return comments.reduce((acc, val) => {
+    return acc + val.votes;
+  }, 0)
+}
+
+module.exports = {createNewTopic, getVoteCount};
