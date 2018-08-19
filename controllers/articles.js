@@ -3,18 +3,21 @@ const { Article, Comment } = require('../models');
 const getArticles = (req, res, next) => {
   Article.find().populate('created_by', '-__v').lean()
     .then(allArticles => {
-      Comment.find().lean()
-      .then(comments => {
-        let articles = allArticles.map(article => {
-          let artComs = comments.filter(comment => {
-            return comment.belongs_to.toString() === article._id.toString();
-          }).length;
-          article.comments = artComs;
-          return article;
-        })
-        res.status(200).send({ articles });
+      return Promise.all([
+        Comment.find().lean(),
+        allArticles
+      ]);
+    })
+    .then(([comments, allArticles]) => {
+      let articles = allArticles.map(article => {
+        let artComs = comments.filter(comment => {
+          return comment.belongs_to.toString() === article._id.toString();
+        }).length;
+        article.comments = artComs;
+        return article;
       })
-    });
+      res.status(200).send({ articles });
+    })
 };
 
 const getArticleById = (req, res, next) => {
@@ -54,12 +57,6 @@ const adjustArticleVoteCount = (req, res, next) => {
       res.status(200).send({ article });
     })
     .catch(next);
-    // .catch(err => {
-    //   if (err.message === 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters') {
-    //     next({ status: 400, msg: 'Article ID is invalid!' });
-    //   }
-    //   else next(err);
-    // });
 }
 
 module.exports = {getArticles, getArticleById, getCommentsByArticleId, addCommentByArticleId, adjustArticleVoteCount};
