@@ -10,18 +10,8 @@ const createNewTopic = (req, res, next) => {
     slug: req.params.slug
   }
   Topic.create(topicObj)
-    .then((topic) => {
-      let articleObj = req.body;
-      articleObj.belongs_to = req.params.slug;
-      Article.create(articleObj)
-        .then(article => {
-          // if (!article.belongs_to) throw {status: 404, msg: 'Topic slug does not exist!'}
-          res.status(201).send({ article });
-        })
-        .catch(next);
-    })
-    .catch(next);
 }
+
 
 const getVoteCount = (comments) => {
   return comments.reduce((acc, val) => {

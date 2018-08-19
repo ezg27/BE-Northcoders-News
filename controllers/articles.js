@@ -14,7 +14,6 @@ const getArticles = (req, res, next) => {
         let artComs = comments.filter(comment => {
           return comment.belongs_to.toString() === article._id.toString();
         });
-        let count = getVoteCount(artComs);
         article.comments = artComs.length;
         return article;
       })
@@ -32,9 +31,7 @@ const getArticleById = (req, res, next) => {
         article
       ]);
     }).then(([comments, article]) => { 
-      let count = getVoteCount(comments);
       article.comments = comments.length;
-      article.votes = count;
       res.status(200).send({ article });
     })
     .catch(next);

@@ -5,7 +5,7 @@ const { expect } = require('chai');
 const mongoose = require('mongoose');
 const testData = require('../seed/testData/index');
 const seedDB = require('../seed/seed.js');
-const { Comment } = require('../models');
+const { Comment, Topic } = require('../models');
 
 describe('NC NEWS API /api', () => {
   let topicDocs, userDocs, articleDocs, commentDocs;
@@ -103,6 +103,7 @@ describe('NC NEWS API /api', () => {
             expect(res.body.article.title).to.equal(
               'The world is a strange place'
             );
+            expect(res.body.article.belongs_to).to.equal(topicDocs[0].slug);
           });
       });
       it('POST returns status 400 and error message when a required field is missing', () => {
@@ -122,7 +123,7 @@ describe('NC NEWS API /api', () => {
             );
           });
       });
-      xit('POST returns status 404 and error message when posted to slug that does not exist', () => {
+      it('POST when topic_slug does not currently exist, article is added to database and new corresponding topic is created', () => {
         const newArticle = {
           title: 'The world is a strange place',
           topic: 'cats',
@@ -131,14 +132,34 @@ describe('NC NEWS API /api', () => {
           created_at: 1471522072389
         };
         return request
-          .post(`/api/topics/aslgjla/articles`)
+          .post(`/api/topics/${topicDocs[0].slug}/articles`)
           .send(newArticle)
-          .expect(404)
+          .expect(201)
           .then(res => {
-            expect(res.body.msg).to.equal(
-              'articles validation failed: title: Path `title` is required.'
+            expect(res.body.article).to.have.all.keys(
+              '_id',
+              'votes',
+              'title',
+              'created_by',
+              'body',
+              'created_at',
+              'belongs_to',
+              '__v'
             );
-          });
+            expect(res.body.article.title).to.equal(
+              'The world is a strange place'
+            );
+            expect(res.body.article.belongs_to).to.equal(topicDocs[0].slug);
+            return Topic.findOne({ slug: topicDocs[0].slug }).lean();
+          }).then(topic => {
+            expect(topic.title).to.equal((topicDocs[0].slug)[0].toUpperCase() + (topicDocs[0].slug).slice(1));
+            expect(topic).to.have.all.keys(
+              '_id',
+              'title',
+              'slug',
+              '__v'
+            );
+          })
       });
     });
   });

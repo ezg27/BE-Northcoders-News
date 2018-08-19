@@ -5,16 +5,15 @@ const formatArticleData = (articleData, userDocs, commentData) => {
     let user = userDocs.find(elem => {
       return elem.username === article.created_by;
     })
-    let votes = commentData.reduce((acc, val) => {
-      if (val.belongs_to === article.title) return acc + val.votes;
-      else return acc;
-    }, 0);
+    // let votes = commentData.reduce((acc, val) => {
+    //   if (val.belongs_to === article.title) return acc + val.votes;
+    //   else return acc;
+    // }, 0);
     const created_by = user._id
     return {
       ...article,
       belongs_to,
-      created_by,
-      votes
+      created_by
     }
   })
 }

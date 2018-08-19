@@ -35,17 +35,15 @@ const addArticleByTopicSlug = (req, res, next) => {
   let slug = { slug: req.params.slug };
   Topic.findOne(slug)
     .then(topic => {
-      if (!topic) createNewTopic(req, res, next);
-      else {
-        let obj = req.body;
-        obj.belongs_to = req.params.slug;
-        Article.create(obj)
-          .then(article => {
-            res.status(201).send({ article });
-          })
-          .catch(next);
-      }
+    if (!topic) createNewTopic(req, res, next);
+      let obj = req.body;
+      obj.belongs_to = req.params.slug;
+      return Article.create(obj)
     })
+    .then(article => {
+      res.status(201).send({ article });
+    })
+    .catch(next);
 }
 
 module.exports = { getTopics, getArticlesByTopicSlug, addArticleByTopicSlug };
