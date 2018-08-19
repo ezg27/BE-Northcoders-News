@@ -1,8 +1,8 @@
 const { Topic, Article, Comment } = require('../models');
-const createNewTopic = require('./utils');
+const { createNewTopic } = require('./utils');
 
 const getTopics = (req, res, next) => {
-  Topic.find().populate('')
+  Topic.find({}, '-__v').populate('')
     .then(topics => {
       res.status(200).send({ topics });
     })
@@ -10,7 +10,7 @@ const getTopics = (req, res, next) => {
 };
 
 const getArticlesByTopicSlug = (req, res, next) => {
-  Article.find({belongs_to: req.params.slug}).lean()
+  Article.find({belongs_to: req.params.slug}, '-__v').lean()
   .then(topicArticles => {
     if (topicArticles.length === 0) throw { status: 404, msg: 'Topic slug does not exist!' };
     return Promise.all([

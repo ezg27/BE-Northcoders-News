@@ -1,10 +1,10 @@
 const { Article, Comment } = require('../models');
 
 const getArticles = (req, res, next) => {
-  Article.find().populate('created_by', '-__v').lean()
+  Article.find({}, '-__v').populate('created_by', '-__v').lean()
     .then(allArticles => {
       return Promise.all([
-        Comment.find().lean(),
+        Comment.find(),
         allArticles
       ]);
     })
@@ -12,8 +12,8 @@ const getArticles = (req, res, next) => {
       let articles = allArticles.map(article => {
         let artComs = comments.filter(comment => {
           return comment.belongs_to.toString() === article._id.toString();
-        }).length;
-        article.comments = artComs;
+        });
+        article.comments = artComs.length;
         return article;
       })
       res.status(200).send({ articles });
@@ -22,7 +22,7 @@ const getArticles = (req, res, next) => {
 
 const getArticleById = (req, res, next) => {
   let obj = { _id: req.params.article_id };
-  Article.findOne(obj).populate('created_by', '-__v')
+  Article.findOne(obj, '-__v').populate('created_by', '-__v')
     .then(article => {
       if (!article) throw {status: 404, msg: 'Article ID does not exist!'}
       res.status(200).send({ article });
