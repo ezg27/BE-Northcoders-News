@@ -38,7 +38,7 @@ const getArticleById = (req, res, next) => {
 };
 
 const getCommentsByArticleId = (req, res, next) => {
-  Comment.find({belongs_to: req.params._id})
+  Comment.find({ belongs_to: req.params._id }).populate('created_by')
     .then(comments => {
       if (comments.length === 0) throw { status: 404, msg: 'Article ID does not exist!' }
       res.status(200).send({ comments });
