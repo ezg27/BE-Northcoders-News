@@ -56,21 +56,19 @@ const adjustArticleVoteCount = (req, res, next) => {
     req.query.vote === 'up' ? 1 : req.query.vote === 'down' ? -1 : null;
   if (!update)
     throw { status: 400, msg: 'Query value must be either "up" or "down"!' };
-  Article.findByIdAndUpdate(
+  const article = Article.findByIdAndUpdate(
     req.params.article_id,
     { $inc: { votes: update } },
     { new: true }
   )
     .populate('created_by')
-    .lean()
-    .then(article => {
-      if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
-      return Promise.all([Comment.find({ belongs_to: article._id }), article]);
-    })
-    .then(([comments, article]) => {
-      article.comments = comments.length;
-      res.status(200).send({ article });
-    })
+    .lean();
+  const comments = Comment.find({ belongs_to: article._id });
+  if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
+  return Promise.all([comments, article])
+    .then(([comments, article]) =>
+      res.status(200).send({ article: { ...article, comments } })
+    )
     .catch(next);
 };
 
