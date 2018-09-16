@@ -24,9 +24,9 @@ const getArticleById = (req, res, next) => {
     .populate('created_by', '-__v')
     .lean();
   const comments = Comment.countDocuments({ belongs_to: article._id });
-  if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
   return Promise.all([comments, article])
-    .then(([comments, article]) => {
+  .then(([comments, article]) => {
+    if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
       res.status(200).send({ article: { ...article, comments } });
     })
     .catch(next);
