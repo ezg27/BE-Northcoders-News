@@ -46,9 +46,7 @@ const getCommentsByArticleId = (req, res, next) => {
 }
 
 const addCommentByArticleId = (req, res, next) => {
-  let obj = req.body;
-  obj.belongs_to = req.params._id;
-  Comment.create(obj)
+  Comment.create({ ...req.body, belongs_to: req.params._id })
     .then(comment => {
     res.status(201).send({ comment });
   });
