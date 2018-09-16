@@ -1,9 +1,7 @@
 const { Topic } = require('../../models');
 
 const createNewTopic = (req, res, next) => {
-  function capitalizeFirstLetter(str) {
-    return str[0].toUpperCase() + str.slice(1);
-  }
+  const capitalizeFirstLetter = str => str[0].toUpperCase() + str.slice(1);
   let title = capitalizeFirstLetter(req.params.slug);
   let topicObj = {
     title: title,
@@ -13,10 +11,6 @@ const createNewTopic = (req, res, next) => {
 }
 
 
-const getVoteCount = (comments) => {
-  return comments.reduce((acc, val) => {
-    return acc + val.votes;
-  }, 0)
-}
+const getVoteCount = (comments) => comments.reduce((acc, val) => acc + val.votes, 0);
 
 module.exports = {createNewTopic, getVoteCount};
