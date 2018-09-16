@@ -1,14 +1,12 @@
 const { Article, Comment } = require('../models');
-const { getVoteCount } = require('./utils');
 
 const getArticles = (req, res, next) => {
-  Article.find({}, '-__v').populate('created_by', '-__v').lean()
-    .then(allArticles => {
+  const getAllArticles = Article.find({}, '-__v').populate('created_by', '-__v').lean();
+  const getAllComments = Comment.find();
       return Promise.all([
-        Comment.find(),
-        allArticles
-      ]);
-    })
+        getAllComments,
+        getAllArticles
+      ])
     .then(([comments, allArticles]) => {
       let articles = allArticles.map(article => {
         let artComs = comments.filter(comment => {
