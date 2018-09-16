@@ -7,9 +7,9 @@ const formatArticleData = (articleData, userDocs, commentData) => {
       ...article,
       belongs_to,
       created_by
-    }
-  })
-}
+    };
+  });
+};
 
 const formatCommentData = (commentData, userDocs, articleDocs) => {
   return commentData.map(comment => {
@@ -21,8 +21,8 @@ const formatCommentData = (commentData, userDocs, articleDocs) => {
       ...comment,
       belongs_to,
       created_by
-    }
-  })
-}
+    };
+  });
+};
 
-module.exports = {formatArticleData, formatCommentData}
+module.exports = { formatArticleData, formatCommentData };
