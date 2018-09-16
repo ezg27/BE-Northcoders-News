@@ -53,7 +53,7 @@ const addCommentByArticleId = (req, res, next) => {
 }
 
 const adjustArticleVoteCount = (req, res, next) => {
-  if (Object.keys(req.query)[0] !== 'vote') throw { status: 400, msg: '"vote" is the only valid query!' }
+  if (!req.query.hasOwnProperty('vote')) throw { status: 400, msg: '"vote" is the only valid query!' }
   let update = (req.query.vote === 'up') ? { $inc: { votes: 1 } } : (req.query.vote === 'down') ? { $inc: { votes: -1 } } : null;
   if (!update) throw { status: 400, msg: 'Query value must be either "up" or "down"!'}
   let obj = { _id: req.params.article_id };
