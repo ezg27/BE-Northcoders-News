@@ -20,15 +20,17 @@ const getArticles = (req, res, next) => {
 };
 
 const getArticleById = (req, res, next) => {
-  let obj = { _id: req.params.article_id };
-  Article.findOne(obj, '-__v').populate('created_by', '-__v').lean()
+  Article.findById(req.params.article_id, '-__v')
+    .populate('created_by', '-__v')
+    .lean()
     .then(article => {
-      if (!article) throw {status: 404, msg: 'Article ID does not exist!'}
+      if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
       return Promise.all([
         Comment.find({ belongs_to: article._id }),
         article
       ]);
-    }).then(([comments, article]) => { 
+    })
+    .then(([comments, article]) => {
       article.comments = comments.length;
       res.status(200).send({ article });
     })
