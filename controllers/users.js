@@ -13,7 +13,8 @@ const getUserByUsername = (req, res, next) => {
     .then(user => {
       if (user === null) throw { status: 404, msg: 'Username does not exist!' };
       res.status(200).send({ user });
-    }).catch(next);
+    })
+    .catch(next);
 };
 
 module.exports = { getUsers, getUserByUsername };
