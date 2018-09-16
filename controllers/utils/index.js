@@ -10,7 +10,4 @@ const createNewTopic = (req, res, next) => {
   Topic.create(topicObj)
 }
 
-
-const getVoteCount = (comments) => comments.reduce((acc, val) => acc + val.votes, 0);
-
-module.exports = {createNewTopic, getVoteCount};
+module.exports = createNewTopic;
