@@ -6,13 +6,13 @@ const getComments = (req, res, next) => {
 };
 
 const deleteCommentById = (req, res, next) => {
-  let obj = { _id: req.params.comment_id};
-  Comment.findByIdAndRemove(obj._id).populate('created_by')
-  .then(comment => {
-    if (!comment) throw { status: 404, msg: 'Comment ID does not exist!' };
-    res.status(200).send({ comment });
-  })
-  .catch(next);
+  Comment.findByIdAndRemove(req.params.comment_id)
+    .populate('created_by')
+    .then(comment => {
+      if (!comment) throw { status: 404, msg: 'Comment ID does not exist!' };
+      res.status(200).send({ comment });
+    })
+    .catch(next);
 }
 
 const adjustCommentVoteCountById = (req, res, next) => {
