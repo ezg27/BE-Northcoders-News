@@ -26,13 +26,12 @@ const getArticleById = (req, res, next) => {
     .then(article => {
       if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
       return Promise.all([
-        Comment.find({ belongs_to: article._id }),
+        Comment.countDocuments({ belongs_to: article._id }),
         article
       ]);
     })
     .then(([comments, article]) => {
-      article.comments = comments.length;
-      res.status(200).send({ article });
+      res.status(200).send({ article: { ...article, comments } });
     })
     .catch(next);
 };
