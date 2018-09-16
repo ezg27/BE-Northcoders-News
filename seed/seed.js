@@ -13,7 +13,9 @@ const seedDB = ({ topicData, userData, articleData, commentData }) => {
     })
     .then(([topicDocs, userDocs]) => {
       return Promise.all([
-        Article.insertMany(formatArticleData(articleData, userDocs, commentData)),
+        Article.insertMany(
+          formatArticleData(articleData, userDocs, commentData)
+        ),
         topicDocs,
         userDocs
       ]);
@@ -27,13 +29,7 @@ const seedDB = ({ topicData, userData, articleData, commentData }) => {
         userDocs,
         articleDocs
       ]);
-    })
-    // .then(([commentDocs, topicDocs, userDocs, articleDocs]) => {
-    //   // console.log(topicDocs);
-    //   // console.log(userDocs);
-    //   // console.log(articleDocs);
-    //   // console.log(commentDocs);
-    // });
+    });
 };
 
 module.exports = seedDB;
