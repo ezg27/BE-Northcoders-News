@@ -3,9 +3,7 @@ const { createNewTopic } = require('./utils');
 
 const getTopics = (req, res, next) => {
   Topic.find({}, '-__v').populate('')
-    .then(topics => {
-      res.status(200).send({ topics });
-    })
+    .then(topics => res.status(200).send({ topics }))
     .catch(next);
 };
 
