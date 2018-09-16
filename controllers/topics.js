@@ -15,10 +15,10 @@ const getArticlesByTopicSlug = (req, res, next) => {
   const comments = Comment.find()
     .populate('created_by')
     .lean();
-  if (topicArticles.length === 0)
-    throw { status: 404, msg: 'Topic slug does not exist!' };
-  return Promise.all([comments, topicArticles])
+    return Promise.all([comments, topicArticles])
     .then(([comments, topicArticles]) => {
+      if (topicArticles.length === 0)
+        throw { status: 404, msg: 'Topic slug does not exist!' };
       const articles = topicArticles.map(article => {
         const artComs = comments.filter(comment => {
           return comment.belongs_to.toString() === article._id.toString();
