@@ -19,8 +19,8 @@ const getArticlesByTopicSlug = (req, res, next) => {
     throw { status: 404, msg: 'Topic slug does not exist!' };
   return Promise.all([comments, topicArticles])
     .then(([comments, topicArticles]) => {
-      let articles = topicArticles.map(article => {
-        let artComs = comments.filter(comment => {
+      const articles = topicArticles.map(article => {
+        const artComs = comments.filter(comment => {
           return comment.belongs_to.toString() === article._id.toString();
         }).length;
         article.comments = artComs;
@@ -32,13 +32,10 @@ const getArticlesByTopicSlug = (req, res, next) => {
 };
 
 const addArticleByTopicSlug = (req, res, next) => {
-  let slug = { slug: req.params.slug };
-  Topic.findOne(slug)
+  Topic.findOne({ slug: req.params.slug })
     .then(topic => {
       if (!topic) createNewTopic(req, res, next);
-      let obj = req.body;
-      obj.belongs_to = req.params.slug;
-      return Article.create(obj);
+      return Article.create({ ...req.body, belongs_to: req.params.slug });
     })
     .then(article => {
       res.status(201).send({ article });
