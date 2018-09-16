@@ -6,8 +6,22 @@ API URL: https://whispering-wave-29555.herokuapp.com/
 ### Getting Started
 
 #### Prerequisites:
+* Node - version 10.6.0
+* Git - version 2.17.1
 * Postman - https://www.getpostman.com/
-* Terminal
+
+#### Dependencies:
+* Express - version 4.16.3 - https://www.npmjs.com/package/express
+* Mongoose - version 2.17.1 - https://mongoosejs.com/
+* Body-parser - version 1.15.2 - https://www.npmjs.com/package/body-parser
+* Cors - version 2.8.4 - https://www.npmjs.com/package/cors
+
+#### devDependencies:
+* Mocha - version 5.2.0 - https://mochajs.org/
+* Chai - version 4.1.2 - https://www.chaijs.com/
+* Nodemon - version 1.17.4 - https://nodemon.io/
+* Supertest - version 3.1.0 - https://www.npmjs.com/package/supertest
+
 
 ### Installing
 
