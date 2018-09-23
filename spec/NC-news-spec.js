@@ -63,12 +63,12 @@ describe('NC NEWS API /api', () => {
             return Promise.all([
               Comment.find({ belongs_to: res.body.articles[0]._id }),
               res
-            ])
+            ]);
           })
           .then(([comments, res]) => {
             expect(comments.length).to.equal(res.body.articles[0].comments);
-          })
-      })
+          });
+      });
       it('GET slug that does not exist in the collection returns status 404 and error message', () => {
         return request
           .get('/api/topics/cheesecake/articles')
@@ -151,15 +151,13 @@ describe('NC NEWS API /api', () => {
             );
             expect(res.body.article.belongs_to).to.equal(topicDocs[0].slug);
             return Topic.findOne({ slug: topicDocs[0].slug }).lean();
-          }).then(topic => {
-            expect(topic.title).to.equal((topicDocs[0].slug)[0].toUpperCase() + (topicDocs[0].slug).slice(1));
-            expect(topic).to.have.all.keys(
-              '_id',
-              'title',
-              'slug',
-              '__v'
-            );
           })
+          .then(topic => {
+            expect(topic.title).to.equal(
+              topicDocs[0].slug[0].toUpperCase() + topicDocs[0].slug.slice(1)
+            );
+            expect(topic).to.have.all.keys('_id', 'title', 'slug', '__v');
+          });
       });
     });
   });
@@ -197,12 +195,12 @@ describe('NC NEWS API /api', () => {
           return Promise.all([
             Comment.find({ belongs_to: res.body.articles[0]._id }),
             res
-          ])
+          ]);
         })
         .then(([comments, res]) => {
           expect(comments.length).to.equal(res.body.articles[0].comments);
-        })
-    })
+        });
+    });
     describe('/:article_id', () => {
       it('GET returns the appropriate article for passed Mongo Id', () => {
         return request
@@ -230,27 +228,27 @@ describe('NC NEWS API /api', () => {
             );
           });
       });
-      it('GET returns correct comment count for article', () => {
+      it('GET returns correct comment count for articles', () => {
         return request
           .get(`/api/articles/${articleDocs[0]._id}`)
           .expect(200)
           .then(res => {
             return Promise.all([
-              Comment.find({ belongs_to: res.body.article._id }),
+              Comment.countDocuments({ belongs_to: res.body.article._id }),
               res
             ]);
           })
           .then(([comments, res]) => {
-            expect(comments.length).to.equal(res.body.article.comments);
+            expect(comments).to.equal(res.body.article.comments);
           });
-      })
+      });
       it('GET invalid ID returns status 400 and error message', () => {
         return request
           .get(`/api/articles/lasjgia`)
           .expect(400)
           .then(res => {
             expect(res.body.msg).to.equal(
-              'Cast to ObjectId failed for value "lasjgia" at path "_id" for model "articles"'
+              'Cast to ObjectId failed for value "lasjgia" at path "belongs_to" for model "comments"'
             );
           });
       });
@@ -297,7 +295,9 @@ describe('NC NEWS API /api', () => {
           .expect(200)
           .then(res => {
             expect(res.body.article.votes).to.equal(articleDocs[1].votes - 1);
-            expect(res.body.article.title).to.equal('7 inspirational thought leaders from Manchester UK');
+            expect(res.body.article.title).to.equal(
+              '7 inspirational thought leaders from Manchester UK'
+            );
           });
       });
       it('PUT invalid ID returns status 400 and error message', () => {
@@ -331,7 +331,9 @@ describe('NC NEWS API /api', () => {
           .put(`/api/articles/${topicDocs[0]._id}?vote=jdsfkjh`)
           .expect(400)
           .then(res => {
-            expect(res.body.msg).to.equal('Query value must be either "up" or "down"!');
+            expect(res.body.msg).to.equal(
+              'Query value must be either "up" or "down"!'
+            );
           });
       });
       describe('/comments', () => {
@@ -428,7 +430,9 @@ describe('NC NEWS API /api', () => {
           .put(`/api/comments/jashdkj?vote=down`)
           .expect(400)
           .then(res => {
-            expect(res.body.msg).to.equal('Cast to ObjectId failed for value "jashdkj" at path "_id" for model "comments"');
+            expect(res.body.msg).to.equal(
+              'Cast to ObjectId failed for value "jashdkj" at path "_id" for model "comments"'
+            );
           });
       });
       it('PUT ID that does not exist in collection returns status 404 and error message', () => {
@@ -452,7 +456,9 @@ describe('NC NEWS API /api', () => {
           .put(`/api/articles/${commentDocs[0]._id}?vote=jdsfkjh`)
           .expect(400)
           .then(res => {
-            expect(res.body.msg).to.equal('Query value must be either "up" or "down"!');
+            expect(res.body.msg).to.equal(
+              'Query value must be either "up" or "down"!'
+            );
           });
       });
       it('DELETE returns the appropriate comment for passed Mongo Id and removes this comment from the collection', () => {

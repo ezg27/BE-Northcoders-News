@@ -8,6 +8,7 @@ const createNewTopic = (req, res, next) => {
     slug: req.params.slug
   }
   Topic.create(topicObj)
+
 }
 
-module.exports = createNewTopic;
+module.exports = createNewTopic; 
