@@ -23,10 +23,12 @@ const getArticleById = (req, res, next) => {
   const article = Article.findById(req.params.article_id, '-__v')
     .populate('created_by', '-__v')
     .lean();
-  const comments = Comment.countDocuments({ belongs_to: article._id });
+  const comments = Comment.countDocuments({
+    belongs_to: req.params.article_id
+  }).lean();
   return Promise.all([comments, article])
-  .then(([comments, article]) => {
-    if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
+    .then(([comments, article]) => {
+      if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
       res.status(200).send({ article: { ...article, comments } });
     })
     .catch(next);
@@ -64,11 +66,11 @@ const adjustArticleVoteCount = (req, res, next) => {
     .populate('created_by')
     .lean();
   const comments = Comment.find({ belongs_to: article._id });
-  if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
   return Promise.all([comments, article])
-    .then(([comments, article]) =>
-      res.status(200).send({ article: { ...article, comments } })
-    )
+    .then(([comments, article]) => {
+      if (!article) throw { status: 404, msg: 'Article ID does not exist!' };
+      res.status(200).send({ article: { ...article, comments } });
+    })
     .catch(next);
 };
 
